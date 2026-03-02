@@ -93,6 +93,12 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
         ProductRawMaterial existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Relationship not found"));
 
+        repository.findByProductIdAndRawMaterialId(dto.productId(), dto.rawMaterialId())
+                .filter(rel -> !rel.getId().equals(id))
+                .ifPresent(rel -> {
+                    throw new RuntimeException("Relationship already exists");
+                });
+
         Product product = productRepository.findById(dto.productId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -117,6 +123,10 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
 
     @Override
     public void delete(Long id) {
-        repository.deleteById(id);
+        //repository.deleteById(id);
+        ProductRawMaterial entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Relationship not found"));
+
+        repository.delete(entity);
     }
 }
