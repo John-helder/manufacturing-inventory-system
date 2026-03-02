@@ -25,7 +25,6 @@ public class ProductRawMaterial {
     @JoinColumn(name = "raw_material_id", nullable = false)
     private RawMaterial rawMaterial;
 
-    @NonNull
     @Min(1)
     @Column(nullable = false)
     private Integer quantityRequired;

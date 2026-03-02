@@ -5,7 +5,13 @@ import com.johnhelder.inventory.domain.ProductRawMaterial;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRawMaterialRepository extends JpaRepository<ProductRawMaterial, Long> {
-    List<ProductRawMaterial> findByProduct(Product product);
+    List<ProductRawMaterial> findByProductId(Long productId);
+
+    Optional<ProductRawMaterial> findByProductIdAndRawMaterialId(
+            Long productId,
+            Long rawMaterialId
+    );
 }
