@@ -1,5 +1,6 @@
 package com.johnhelder.inventory.controller;
 
+import com.johnhelder.inventory.dto.ProductProductionAvailabilityDTO;
 import com.johnhelder.inventory.dto.ProductRequestDTO;
 import com.johnhelder.inventory.dto.ProductResponseDTO;
 import com.johnhelder.inventory.service.ProductService;
@@ -45,4 +46,10 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/production-availability")
+    public ResponseEntity<List<ProductProductionAvailabilityDTO>> getProductionAvailability() {
+        return ResponseEntity.ok(productService.getProductionAvailability());
+    }
+
 }

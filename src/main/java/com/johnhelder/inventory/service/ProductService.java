@@ -1,6 +1,6 @@
 package com.johnhelder.inventory.service;
 
-import com.johnhelder.inventory.domain.Product;
+import com.johnhelder.inventory.dto.ProductProductionAvailabilityDTO;
 import com.johnhelder.inventory.dto.ProductRequestDTO;
 import com.johnhelder.inventory.dto.ProductResponseDTO;
 
@@ -17,4 +17,7 @@ public interface ProductService {
     ProductResponseDTO update(Long id, ProductRequestDTO dto);
 
     void delete(Long id);
+
+    List<ProductProductionAvailabilityDTO> getProductionAvailability();
+
 }
