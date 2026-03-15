@@ -12,8 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,14 +67,68 @@ public class RawMaterialServiceTest {
     }
 
     @Test
-    void shouldReturnRawMaterialWhenIdExists() {}
+    void shouldReturnRawMaterialWhenIdExists() {
+        RawMaterial material = new RawMaterial();
+        material.setId(1L);
+        material.setCode("RM01");
+        material.setName("Steel");
+        material.setStockQuantity(100);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(material));
+
+        RawMaterialResponseDTO result = service.findById(1L);
+
+        assertEquals(1L, result.id());
+        assertEquals("Steel", result.name());
+
+        verify(repository).findById(1L);
+    }
 
     @Test
-    void shouldThrowExceptionWhenRawMaterialNotFound() {}
+    void shouldThrowExceptionWhenRawMaterialNotFound() {
+
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.findById(1L)
+        );
+
+        assertEquals("Raw material not found", exception.getMessage());
+
+        verify(repository).findById(1L);
+
+    }
 
     @Test
-    void shouldUpdateRawMaterial() {}
+    void shouldUpdateRawMaterial() {
+
+        RawMaterial material = new RawMaterial();
+        material.setId(1L);
+        material.setCode("RM01");
+        material.setName("Steel");
+        material.setStockQuantity(100);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(material));
+        when(repository.save(any())).thenReturn(material);
+
+        RawMaterialRequestDTO dto =
+                new RawMaterialRequestDTO("RM001", "Steels", 200);
+
+        RawMaterialResponseDTO updated = service.update(1L, dto);
+
+        assertEquals("Steels", updated.name());
+        assertEquals("RM001", updated.code());
+
+        verify(repository).findById(1L);
+        verify(repository).save(any());
+
+    }
 
     @Test
-    void shouldDeleteRawMaterial() {}
+    void shouldDeleteRawMaterial() {
+
+        service.delete(1L);
+        verify(repository).deleteById(1L);
+    }
 }
