@@ -5,6 +5,8 @@ import com.johnhelder.inventory.domain.ProductRawMaterial;
 import com.johnhelder.inventory.domain.RawMaterial;
 import com.johnhelder.inventory.dto.ProductRawMaterialRequestDTO;
 import com.johnhelder.inventory.dto.ProductRawMaterialResponseDTO;
+import com.johnhelder.inventory.exception.BusinessException;
+import com.johnhelder.inventory.exception.ResourceNotFoundException;
 import com.johnhelder.inventory.repository.ProductRawMaterialRepository;
 import com.johnhelder.inventory.repository.ProductRepository;
 import com.johnhelder.inventory.repository.RawMaterialRepository;
@@ -26,16 +28,16 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
     public ProductRawMaterialResponseDTO create(ProductRawMaterialRequestDTO dto) {
 
         Product product = productRepository.findById(dto.productId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         RawMaterial rawMaterial = rawMaterialRepository.findById(dto.rawMaterialId())
-                .orElseThrow(() -> new RuntimeException("Raw material not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw material not found"));
 
         repository.findByProductIdAndRawMaterialId(
                 dto.productId(),
                 dto.rawMaterialId()
         ).ifPresent(rel -> {
-            throw new RuntimeException("Relationship already exists");
+            throw new BusinessException("Relationship already exists");
         });
 
         ProductRawMaterial entity = ProductRawMaterial.builder()
@@ -75,7 +77,7 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
     public ProductRawMaterialResponseDTO findById(Long id) {
 
         ProductRawMaterial entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Relationship not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Relationship not found"));
 
         return new ProductRawMaterialResponseDTO(
                 entity.getId(),
@@ -91,19 +93,19 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
     public ProductRawMaterialResponseDTO update(Long id, ProductRawMaterialRequestDTO dto) {
 
         ProductRawMaterial existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Relationship not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Relationship not found"));
 
         repository.findByProductIdAndRawMaterialId(dto.productId(), dto.rawMaterialId())
                 .filter(rel -> !rel.getId().equals(id))
                 .ifPresent(rel -> {
-                    throw new RuntimeException("Relationship already exists");
+                    throw new BusinessException("Relationship already exists");
                 });
 
         Product product = productRepository.findById(dto.productId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         RawMaterial rawMaterial = rawMaterialRepository.findById(dto.rawMaterialId())
-                .orElseThrow(() -> new RuntimeException("Raw material not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw material not found"));
 
         existing.setProduct(product);
         existing.setRawMaterial(rawMaterial);
@@ -123,9 +125,8 @@ public class ProductRawMaterialServiceImpl implements ProductRawMaterialService 
 
     @Override
     public void delete(Long id) {
-        //repository.deleteById(id);
         ProductRawMaterial entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Relationship not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Relationship not found"));
 
         repository.delete(entity);
     }

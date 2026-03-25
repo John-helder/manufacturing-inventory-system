@@ -3,6 +3,7 @@ package com.johnhelder.inventory.service.impl;
 import com.johnhelder.inventory.domain.RawMaterial;
 import com.johnhelder.inventory.dto.RawMaterialRequestDTO;
 import com.johnhelder.inventory.dto.RawMaterialResponseDTO;
+import com.johnhelder.inventory.exception.ResourceNotFoundException;
 import com.johnhelder.inventory.repository.RawMaterialRepository;
 import com.johnhelder.inventory.service.RawMaterialService;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class RawMaterialServiceImpl implements RawMaterialService {
     public RawMaterialResponseDTO findById(Long id) {
 
         RawMaterial rawMaterial = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Raw material not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw material not found"));
 
         return new RawMaterialResponseDTO(
                 rawMaterial.getId(),
@@ -66,7 +67,7 @@ public class RawMaterialServiceImpl implements RawMaterialService {
     @Override
     public RawMaterialResponseDTO update(Long id, RawMaterialRequestDTO dto) {
         RawMaterial existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Raw material not found"));
 
         existing.setCode(dto.code());
         existing.setName(dto.name());

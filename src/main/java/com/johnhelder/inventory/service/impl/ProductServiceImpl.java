@@ -5,6 +5,7 @@ import com.johnhelder.inventory.domain.ProductRawMaterial;
 import com.johnhelder.inventory.dto.ProductProductionAvailabilityDTO;
 import com.johnhelder.inventory.dto.ProductRequestDTO;
 import com.johnhelder.inventory.dto.ProductResponseDTO;
+import com.johnhelder.inventory.exception.ResourceNotFoundException;
 import com.johnhelder.inventory.repository.ProductRawMaterialRepository;
 import com.johnhelder.inventory.repository.ProductRepository;
 import com.johnhelder.inventory.service.ProductService;
@@ -55,7 +56,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductResponseDTO findById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         return new ProductResponseDTO(
                 product.getId(),
@@ -68,7 +69,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductResponseDTO update(Long id, ProductRequestDTO dto) {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         existing.setCode(dto.code());
         existing.setName(dto.name());
