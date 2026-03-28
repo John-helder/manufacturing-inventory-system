@@ -28,6 +28,9 @@ public class ProductServiceImpl implements ProductService{
                 .code(dto.code())
                 .name(dto.name())
                 .value(dto.value())
+                .description(dto.description())
+                .category(dto.category())
+                .productionTime(dto.productionTime())
                 .build();
 
         Product saved = productRepository.save(product);
@@ -36,7 +39,10 @@ public class ProductServiceImpl implements ProductService{
                 saved.getId(),
                 saved.getCode(),
                 saved.getName(),
-                saved.getValue()
+                saved.getValue(),
+                saved.getDescription(),
+                saved.getCategory(),
+                saved.getProductionTime()
         );
     }
 
@@ -48,7 +54,10 @@ public class ProductServiceImpl implements ProductService{
                         product.getId(),
                         product.getCode(),
                         product.getName(),
-                        product.getValue()
+                        product.getValue(),
+                        product.getDescription(),
+                        product.getCategory(),
+                        product.getProductionTime()
                 ))
                 .toList();
     }
@@ -62,7 +71,10 @@ public class ProductServiceImpl implements ProductService{
                 product.getId(),
                 product.getCode(),
                 product.getName(),
-                product.getValue()
+                product.getValue(),
+                product.getDescription(),
+                product.getCategory(),
+                product.getProductionTime()
         );
     }
 
@@ -74,6 +86,9 @@ public class ProductServiceImpl implements ProductService{
         existing.setCode(dto.code());
         existing.setName(dto.name());
         existing.setValue(dto.value());
+        existing.setCategory(dto.category());
+        existing.setDescription(dto.description());
+        existing.setProductionTime(dto.productionTime());
 
         Product updated = productRepository.save(existing);
 
@@ -81,7 +96,10 @@ public class ProductServiceImpl implements ProductService{
                 updated.getId(),
                 updated.getCode(),
                 updated.getName(),
-                updated.getValue()
+                updated.getValue(),
+                updated.getDescription(),
+                updated.getCategory(),
+                updated.getProductionTime()
         );
     }
 

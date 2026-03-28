@@ -1,6 +1,7 @@
 package com.johnhelder.inventory.dto;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,6 +16,13 @@ public record ProductRequestDTO(
 
         @NotNull
         @DecimalMin(value = "0.0", inclusive = false)
-        BigDecimal value
+        BigDecimal value,
+
+        String description,
+
+        String category,
+
+        @Min(0)
+        Integer productionTime
 
 ) {}

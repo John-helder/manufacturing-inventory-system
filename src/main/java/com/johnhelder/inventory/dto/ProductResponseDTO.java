@@ -6,5 +6,8 @@ public record ProductResponseDTO(
         Long id,
         String code,
         String name,
-        BigDecimal value
+        BigDecimal value,
+        String description,
+        String category,
+        Integer productionTime
 ) {}

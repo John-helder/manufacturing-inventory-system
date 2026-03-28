@@ -26,4 +26,13 @@ public class Product {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal value;
 
+    @Column(length = 255)
+    private String description;
+
+    @Column(length = 100)
+    private String category;
+
+    @Column
+    private Integer productionTime;
+
 }
