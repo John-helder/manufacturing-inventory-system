@@ -1,20 +1,29 @@
 package com.johnhelder.inventory.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 
 public record RawMaterialRequestDTO(
         @NotBlank
-        @Size(max = 50)
         String code,
 
         @NotBlank
-        @Size(max = 150)
         String name,
 
         @NotNull
-        @PositiveOrZero
-        Integer quantity
+        @Min(0)
+        Integer quantity,
+
+        String category,
+
+        @Min(0)
+        Integer minimumQuantity,
+
+        String unit,
+
+        String location,
+
+        @DecimalMin("0.0")
+        BigDecimal unitPrice
 ) {}

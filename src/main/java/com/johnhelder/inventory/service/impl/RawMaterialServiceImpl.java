@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class RawMaterialServiceImpl implements RawMaterialService {
@@ -25,7 +24,13 @@ public class RawMaterialServiceImpl implements RawMaterialService {
                 .code(dto.code())
                 .name(dto.name())
                 .stockQuantity(dto.quantity())
+                .category(dto.category())
+                .minimumQuantity(dto.minimumQuantity())
+                .unit(dto.unit())
+                .location(dto.location())
+                .unitPrice(dto.unitPrice())
                 .build();
+
 
         RawMaterial saved = repository.save(material);
 
@@ -33,7 +38,12 @@ public class RawMaterialServiceImpl implements RawMaterialService {
                 saved.getId(),
                 saved.getCode(),
                 saved.getName(),
-                saved.getStockQuantity()
+                saved.getStockQuantity(),
+                saved.getCategory(),
+                saved.getMinimumQuantity(),
+                saved.getUnit(),
+                saved.getLocation(),
+                saved.getUnitPrice()
         );
     }
 
@@ -45,7 +55,12 @@ public class RawMaterialServiceImpl implements RawMaterialService {
                         rawMaterial.getId(),
                         rawMaterial.getCode(),
                         rawMaterial.getName(),
-                        rawMaterial.getStockQuantity()
+                        rawMaterial.getStockQuantity(),
+                        rawMaterial.getCategory(),
+                        rawMaterial.getMinimumQuantity(),
+                        rawMaterial.getUnit(),
+                        rawMaterial.getLocation(),
+                        rawMaterial.getUnitPrice()
                 ))
                 .toList();
     }
@@ -60,7 +75,13 @@ public class RawMaterialServiceImpl implements RawMaterialService {
                 rawMaterial.getId(),
                 rawMaterial.getCode(),
                 rawMaterial.getName(),
-                rawMaterial.getStockQuantity()
+                rawMaterial.getStockQuantity(),
+                rawMaterial.getCategory(),
+                rawMaterial.getMinimumQuantity(),
+                rawMaterial.getUnit(),
+                rawMaterial.getLocation(),
+                rawMaterial.getUnitPrice()
+
         );
     }
 
@@ -72,6 +93,11 @@ public class RawMaterialServiceImpl implements RawMaterialService {
         existing.setCode(dto.code());
         existing.setName(dto.name());
         existing.setStockQuantity(dto.quantity());
+        existing.setCategory(dto.category());
+        existing.setMinimumQuantity(dto.minimumQuantity());
+        existing.setLocation(dto.location());
+        existing.setUnit(dto.unit());
+        existing.setUnitPrice(dto.unitPrice());
 
         RawMaterial updated = repository.save(existing);
 
@@ -79,7 +105,12 @@ public class RawMaterialServiceImpl implements RawMaterialService {
                 updated.getId(),
                 updated.getCode(),
                 updated.getName(),
-                updated.getStockQuantity()
+                updated.getStockQuantity(),
+                updated.getCategory(),
+                updated.getMinimumQuantity(),
+                updated.getUnit(),
+                updated.getLocation(),
+                updated.getUnitPrice()
         );
     }
 
