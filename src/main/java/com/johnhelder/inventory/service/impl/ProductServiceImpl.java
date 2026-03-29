@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,48 +113,46 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProductProductionAvailabilityDTO> getProductionAvailability() {
 
-        List<ProductProductionAvailabilityDTO> response = new ArrayList<>();
-
         List<Product> products = productRepository.findAll();
+        List<ProductRawMaterial> allRelations = productRawMaterialRepository.findAll();
+
+        // agrupa os vínculos por produto em memória
+        Map<Long, List<ProductRawMaterial>> relationsByProduct = allRelations.stream()
+                .collect(Collectors.groupingBy(rel -> rel.getProduct().getId()));
+
+        List<ProductProductionAvailabilityDTO> response = new ArrayList<>();
 
         for (Product product : products) {
 
             List<ProductRawMaterial> relations =
-                    productRawMaterialRepository.findByProductId(product.getId());
+                    relationsByProduct.getOrDefault(product.getId(), List.of());
 
             if (relations.isEmpty()) {
-                response.add(
-                        new ProductProductionAvailabilityDTO(
-                                product.getId(),
-                                product.getName(),
-                                false,
-                                0
-                        )
-                );
+                response.add(new ProductProductionAvailabilityDTO(
+                        product.getId(),
+                        product.getName(),
+                        false,
+                        0
+                ));
                 continue;
             }
 
             int maxPossible = Integer.MAX_VALUE;
 
             for (ProductRawMaterial rel : relations) {
-
-                int possible =
-                        rel.getRawMaterial().getStockQuantity()
-                                / rel.getQuantityRequired();
-
+                int possible = rel.getRawMaterial().getStockQuantity()
+                        / rel.getQuantityRequired();
                 maxPossible = Math.min(maxPossible, possible);
             }
 
             boolean canProduce = maxPossible > 0;
 
-            response.add(
-                    new ProductProductionAvailabilityDTO(
-                            product.getId(),
-                            product.getName(),
-                            canProduce,
-                            maxPossible
-                    )
-            );
+            response.add(new ProductProductionAvailabilityDTO(
+                    product.getId(),
+                    product.getName(),
+                    canProduce,
+                    maxPossible
+            ));
         }
 
         return response;
