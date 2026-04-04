@@ -4,14 +4,18 @@ Sistema de controle de estoque para manufatura, desenvolvido em Java com Spring 
 
 > Projeto iniciado como teste técnico para uma vaga e continuado como projeto de aprendizado em Java e Spring Boot.
 
+🖥️ **Frontend:** [John-helder/Inventory-Frontend](https://github.com/John-helder/Inventory-Frontend)
+
 ---
 
 ## 📋 Funcionalidades
 
-- Cadastro, listagem, edição e exclusão de **Produtos**
-- Cadastro, listagem, edição e exclusão de **Matérias-primas**
+- Cadastro, listagem, edição e exclusão de **Produtos** (com descrição, categoria e tempo de produção)
+- Cadastro, listagem, edição e exclusão de **Matérias-primas** (com categoria, estoque mínimo, unidade, localização e preço unitário)
 - Vínculo entre produtos e matérias-primas com quantidade necessária
 - Cálculo automático de **disponibilidade de produção** com base no estoque atual
+- **Tratamento global de exceções** com respostas HTTP semânticas (404, 409, 400)
+- Documentação interativa via **Swagger/OpenAPI**
 
 ---
 
@@ -23,7 +27,7 @@ Sistema de controle de estoque para manufatura, desenvolvido em Java com Spring 
 - PostgreSQL
 - Maven
 - Lombok
-- Swagger/OpenAPI (SpringDoc 2.5)
+- Swagger/OpenAPI (SpringDoc 2.8.6)
 - JUnit 5 + Mockito (testes unitários)
 
 ---
@@ -37,6 +41,7 @@ src/
         ├── controller/       # Camada REST (endpoints da API)
         ├── domain/           # Entidades JPA
         ├── dto/              # Objetos de transferência de dados
+        ├── exception/        # Exceções customizadas e GlobalExceptionHandler
         ├── repository/       # Interfaces Spring Data JPA
         └── service/          # Lógica de negócio (interfaces + implementações)
 └── test/
@@ -50,7 +55,7 @@ src/
 
 ### Pré-requisitos
 
-- Java 17+
+- Java 21+
 - Maven
 - PostgreSQL
 
@@ -69,6 +74,7 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/manufacturing_inventory
 spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
 ```
 
 ### Rodando o projeto
@@ -85,6 +91,8 @@ cd manufacturing-inventory-system
 ```
 
 A API estará disponível em: `http://localhost:8080`
+
+A documentação Swagger estará disponível em: `http://localhost:8080/swagger-ui/index.html`
 
 ---
 
@@ -106,7 +114,10 @@ A API estará disponível em: `http://localhost:8080`
 {
   "code": "PROD001",
   "name": "Cadeira Ergonômica",
-  "value": 499.90
+  "value": 499.90,
+  "description": "Cadeira ergonômica para escritório",
+  "category": "Móveis",
+  "productionTime": 30
 }
 ```
 
@@ -116,7 +127,10 @@ A API estará disponível em: `http://localhost:8080`
   "id": 1,
   "code": "PROD001",
   "name": "Cadeira Ergonômica",
-  "value": 499.90
+  "value": 499.90,
+  "description": "Cadeira ergonômica para escritório",
+  "category": "Móveis",
+  "productionTime": 30
 }
 ```
 
@@ -127,7 +141,7 @@ A API estará disponível em: `http://localhost:8080`
     "productId": 1,
     "productName": "Cadeira Ergonômica",
     "canProduce": true,
-    "maxQuantity": 15
+    "maxQuantityPossible": 15
   }
 ]
 ```
@@ -148,8 +162,13 @@ A API estará disponível em: `http://localhost:8080`
 ```json
 {
   "code": "RM001",
-  "name": "Aço",
-  "quantity": 500
+  "name": "Aço Carbono",
+  "quantity": 500,
+  "category": "Metal",
+  "minimumQuantity": 100,
+  "unit": "kg",
+  "location": "A-01",
+  "unitPrice": 45.90
 }
 ```
 
@@ -158,8 +177,13 @@ A API estará disponível em: `http://localhost:8080`
 {
   "id": 1,
   "code": "RM001",
-  "name": "Aço",
-  "stockQuantity": 500
+  "name": "Aço Carbono",
+  "stockQuantity": 500,
+  "category": "Metal",
+  "minimumQuantity": 100,
+  "unit": "kg",
+  "location": "A-01",
+  "unitPrice": 45.90
 }
 ```
 
@@ -191,8 +215,31 @@ A API estará disponível em: `http://localhost:8080`
   "productId": 1,
   "productName": "Cadeira Ergonômica",
   "rawMaterialId": 1,
-  "rawMaterialName": "Aço",
+  "rawMaterialName": "Aço Carbono",
   "quantityRequired": 4
+}
+```
+
+---
+
+## ⚠️ Tratamento de erros
+
+A API retorna respostas padronizadas para todos os erros:
+
+| Status | Situação |
+|--------|----------|
+| 400 | Dados inválidos na requisição |
+| 404 | Recurso não encontrado |
+| 409 | Conflito (ex: vínculo duplicado) |
+| 500 | Erro interno inesperado |
+
+**Exemplo de resposta de erro:**
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product not found",
+  "timestamp": "2026-03-28T10:00:00"
 }
 ```
 
@@ -206,13 +253,20 @@ Para executar os testes unitários:
 ./mvnw test
 ```
 
+Cobertura atual:
+- `RawMaterialServiceImpl` — 6 testes
+- `ProductServiceImpl` — 9 testes
+- `ProductRawMaterialServiceImpl` — 11 testes
+
 ---
 
 ## 🔜 Próximos passos
 
-- [ ] Tratamento global de exceções com `@ControllerAdvice`
-- [ ] Expandir cobertura de testes unitários
+- [x] Tratamento global de exceções com `@ControllerAdvice`
+- [x] Expandir cobertura de testes unitários
 - [x] Documentação da API com Swagger/OpenAPI
+- [x] Integração com frontend React
+- [ ] Kanban de produção (A Fazer → Em Andamento → Em Teste → Concluído)
 - [ ] Validações customizadas nos DTOs
 
 ---
@@ -221,5 +275,5 @@ Para executar os testes unitários:
 
 **John Helder**
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/seu-perfil)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/john-helder)
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/John-helder)
