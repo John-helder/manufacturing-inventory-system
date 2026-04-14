@@ -53,11 +53,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "Internal Server Error",
-                        "An unexpected error occurred",
+                        ex.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(Exception ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDTO(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Unauthorized",
+                        "Usuário ou senha inválidos",
                         LocalDateTime.now()
                 ));
     }
